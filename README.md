@@ -1,7 +1,6 @@
 # Software License and Usage Management System  
 **Fall 2025 — Software Engineering Project**  
-**Developed by:** Jack & David
-**Instructor:** Jose Tovar  
+**Developed by:** Jack & David 
 
 ---
 
