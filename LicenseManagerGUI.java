@@ -4,71 +4,55 @@
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
+import java.awt.event.*;
 
-public class LicenseManagerGUI extends JFrame {
+public class LicenseManager {
+    public static void main(String[] args) {
+        JFrame frame = new JFrame("License Manager");
+        frame.setSize(400, 250);
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.setLayout(new BorderLayout());
 
-    private JTextField licenseKeyField;
-    private JButton activateButton;
-    private JButton deactivateButton;
-    private JLabel statusLabel;
+        JPanel inputPanel = new JPanel();
+        inputPanel.setLayout(new GridLayout(3, 2, 5, 5));
 
-    public LicenseManagerGUI() {
-        setTitle("License Manager");
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        setSize(400, 200);
-        setLocationRelativeTo(null);
+        JLabel nameLabel = new JLabel("Name:");
+        JTextField nameField = new JTextField();
 
-        initUI();
-    }
+        JLabel keyLabel = new JLabel("License Key:");
+        JTextField keyField = new JTextField();
 
-    private void initUI() {
-        JPanel panel = new JPanel();
-        panel.setLayout(new GridLayout(4, 1, 10, 10));
-        panel.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
+        JButton generateButton = new JButton("Generate License");
 
-        JLabel label = new JLabel("Enter License Key:");
-        licenseKeyField = new JTextField();
-        activateButton = new JButton("Activate");
-        deactivateButton = new JButton("Deactivate");
-        statusLabel = new JLabel("Status: Not Activated");
+        inputPanel.add(nameLabel);
+        inputPanel.add(nameField);
+        inputPanel.add(keyLabel);
+        inputPanel.add(keyField);
+        inputPanel.add(new JLabel()); // spacer
+        inputPanel.add(generateButton);
 
-        JPanel buttonPanel = new JPanel();
-        buttonPanel.add(activateButton);
-        buttonPanel.add(deactivateButton);
+        JTextArea outputArea = new JTextArea();
+        outputArea.setEditable(false);
+        JScrollPane scroll = new JScrollPane(outputArea);
 
-        panel.add(label);
-        panel.add(licenseKeyField);
-        panel.add(buttonPanel);
-        panel.add(statusLabel);
+        frame.add(inputPanel, BorderLayout.NORTH);
+        frame.add(scroll, BorderLayout.CENTER);
 
-        add(panel);
-
-        activateButton.addActionListener(new ActionListener() {
-            @Override
+        generateButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                String key = licenseKeyField.getText().trim();
-                if (key.isEmpty()) {
-                    statusLabel.setText("Status: Please enter a license key.");
+                String name = nameField.getText().trim();
+                String key = keyField.getText().trim();
+
+                if (name.isEmpty() || key.isEmpty()) {
+                    outputArea.setText("Please fill out both fields.");
                 } else {
-                    statusLabel.setText("Status: License activated.");
+                    // Fake license validation / generation
+                    String licenseCode = name.toUpperCase() + "-" + key.hashCode();
+                    outputArea.setText("License generated:\n" + licenseCode);
                 }
             }
         });
 
-        deactivateButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                statusLabel.setText("Status: License deactivated.");
-                licenseKeyField.setText("");
-            }
-        });
-    }
-
-    public static void main(String[] args) {
-        SwingUtilities.invokeLater(() -> {
-            new LicenseManagerGUI().setVisible(true);
-        });
+        frame.setVisible(true);
     }
 }
