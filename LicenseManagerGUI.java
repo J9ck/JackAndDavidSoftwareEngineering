@@ -1,56 +1,92 @@
 // LicenseManagerGUI.java
-// Made by Jack Doyle
-// October 06, 2025
+// Created by Jack Doyle
+// Updated: October 19, 2025
+// Front-End GUI for the Software License and Usage Management System
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 
-public class LicenseManager {
+public class LicenseManagerGUI {
+
     public static void main(String[] args) {
-        JFrame frame = new JFrame("License Manager");
-        frame.setSize(400, 250);
+        JFrame frame = new JFrame("Software License Manager");
+        frame.setSize(500, 350);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.setLayout(new BorderLayout());
+        frame.setLayout(new BorderLayout(10, 10));
 
-        JPanel inputPanel = new JPanel();
-        inputPanel.setLayout(new GridLayout(3, 2, 5, 5));
+        // Title Label
+        JLabel titleLabel = new JLabel("Software License Manager", SwingConstants.CENTER);
+        titleLabel.setFont(new Font("Arial", Font.BOLD, 18));
+        frame.add(titleLabel, BorderLayout.NORTH);
 
-        JLabel nameLabel = new JLabel("Name:");
+        // Input Panel
+        JPanel inputPanel = new JPanel(new GridLayout(4, 2, 10, 10));
+
+        JLabel nameLabel = new JLabel("User Name:");
         JTextField nameField = new JTextField();
 
         JLabel keyLabel = new JLabel("License Key:");
         JTextField keyField = new JTextField();
 
+        JLabel expiryLabel = new JLabel("Expiry Date (YYYY-MM-DD):");
+        JTextField expiryField = new JTextField();
+
         JButton generateButton = new JButton("Generate License");
+        JButton clearButton = new JButton("Clear Fields");
 
         inputPanel.add(nameLabel);
         inputPanel.add(nameField);
         inputPanel.add(keyLabel);
         inputPanel.add(keyField);
-        inputPanel.add(new JLabel()); // spacer
+        inputPanel.add(expiryLabel);
+        inputPanel.add(expiryField);
         inputPanel.add(generateButton);
+        inputPanel.add(clearButton);
 
+        frame.add(inputPanel, BorderLayout.CENTER);
+
+        // Output Area
         JTextArea outputArea = new JTextArea();
         outputArea.setEditable(false);
+        outputArea.setMargin(new Insets(10, 10, 10, 10));
         JScrollPane scroll = new JScrollPane(outputArea);
+        frame.add(scroll, BorderLayout.SOUTH);
 
-        frame.add(inputPanel, BorderLayout.NORTH);
-        frame.add(scroll, BorderLayout.CENTER);
-
+        // Event Listeners
         generateButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 String name = nameField.getText().trim();
                 String key = keyField.getText().trim();
+                String expiry = expiryField.getText().trim();
 
-                if (name.isEmpty() || key.isEmpty()) {
-                    outputArea.setText("Please fill out both fields.");
-                } else {
-                    // Fake license validation / generation
-                    String licenseCode = name.toUpperCase() + "-" + key.hashCode();
-                    outputArea.setText("License generated:\n" + licenseCode);
+                if (name.isEmpty() || key.isEmpty() || expiry.isEmpty()) {
+                    outputArea.setText("Please fill out all fields before generating a license.");
+                    return;
+                }
+
+                try {
+                    LocalDate expDate = LocalDate.parse(expiry, DateTimeFormatter.ISO_LOCAL_DATE);
+                    String licenseCode = name.toUpperCase() + "-" + Math.abs(key.hashCode());
+                    outputArea.setText("License Generated Successfully!\n\n"
+                            + "Name: " + name + "\n"
+                            + "Key: " + key + "\n"
+                            + "License Code: " + licenseCode + "\n"
+                            + "Expires: " + expDate + "\n"
+                            + "Status: ACTIVE");
+                } catch (Exception ex) {
+                    outputArea.setText("Invalid date format. Please use YYYY-MM-DD.");
                 }
             }
+        });
+
+        clearButton.addActionListener(e -> {
+            nameField.setText("");
+            keyField.setText("");
+            expiryField.setText("");
+            outputArea.setText("");
         });
 
         frame.setVisible(true);
