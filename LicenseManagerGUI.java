@@ -3,6 +3,11 @@
 // Updated: October 19, 2025
 // Front-End GUI for the Software License and Usage Management System
 
+// LicenseManagerGUI.java
+// Created by Jack Doyle
+// Updated: October 19, 2025
+// Front-End GUI for the Software License and Usage Management System
+
 package licensemanagergui;
 
 import javax.swing.*;
