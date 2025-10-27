@@ -164,7 +164,7 @@ public class LicenseManagerGUI {
         });
 
         exportItem.addActionListener(e->JOptionPane.showMessageDialog(frame,"Export not implemented"));
-        aboutItem.addActionListener(e->JOptionPane.showMessageDialog(frame,"License Manager v1.0 by Jack Doyle\nwww.jgcks.com"));
+        aboutItem.addActionListener(e->JOptionPane.showMessageDialog(frame,"License Manager v1.0 by jgcks & David\nwww.jgcks.com"));
 
         generateButton.addActionListener(e->{
             String software=(String)softwareDropdown.getSelectedItem();
