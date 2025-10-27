@@ -1,28 +1,49 @@
 # Software License and Usage Management System  
 **Fall 2025 — Software Engineering Project**  
-**Developed by:** Jack & David 
+**Developed by:** Jack Doyle & David  
 
 ---
 
-## Project Overview  
-The **Software License and Usage Management System** is a desktop application designed to help organizations track and optimize software license usage across employee computers.  
-
-With rising software costs, many organizations overpay for unused licenses or risk noncompliance due to poor tracking. This tool aims to provide **cost visibility**, **usage tracking**, and **license compliance monitoring** through a simple and effective desktop interface.
+## Overview  
+The **Software License and Usage Management System** is a lightweight desktop application for managing and monitoring software licenses. It provides a clear overview of license status, cost, and usage patterns to help reduce waste and ensure compliance.
 
 ---
 
-## Project Goals
-- Monitor software usage activity across employee computers.  
-- Track license expiration dates and ensure compliance.  
-- Provide reports showing utilization and cost efficiency per license.  
-- Help organizations reduce unnecessary software spending.
+## Features  
+| Category | Description |
+|-----------|-------------|
+| **License Management** | Add, edit, and delete software license records. |
+| **Usage Tracking** | Record user activity, usage time, and expiration data. |
+| **Reporting** | Generate simple reports showing license utilization and cost efficiency. |
+| **Menu Bar Controls** | Functional top menu for managing products, tools, licenses, and help options. |
+| **Data View** | Table-based display of all licenses with sortable columns and live updates. |
 
 ---
 
-## 🧠 Functionality
+## How It Works  
+1. Launch the application (`LicenseManagerGUI.java`).  
+2. Use the top **Menu Bar** to add or remove licenses, manage products, or access help.  
+3. Select a license from the table to view or modify its details.  
+4. Save data for persistence between sessions (feature in development).  
 
-| Feature | Description |
-|----------|-------------|
-| **Cost Visibility** | Display how much each license costs and how often it’s used. |
-| **Usage Tracking** | Monitor software start/stop times, duration, and user information. |
-| **Compliance Monitoring** | Identify overused or underused licenses for renewal decisions
+---
+
+## Technical Stack  
+- **Language:** Java (Swing GUI)  
+- **IDE:** IntelliJ IDEA / Eclipse  
+- **Frameworks:** Swing, AWT  
+- **Version Control:** Git & GitHub  
+
+---
+
+## Authors  
+- **Jack Doyle** — Application Developer  
+- **David** — Backend and Database Developer  
+
+---
+
+## Future Plans  
+- Database integration for license persistence.  
+- Automated usage reporting.  
+- Network-based license monitoring.  
+- Cloud synchronization support.  
