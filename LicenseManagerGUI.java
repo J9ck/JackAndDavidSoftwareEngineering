@@ -1,28 +1,71 @@
 // LicenseManagerGUI.java
 // Created by Jack Doyle
 // Updated on October 27, 2025
-
 package licensemanagergui;
 
 import javax.swing.*;
+import javax.swing.table.DefaultTableModel;
+import javax.swing.tree.DefaultMutableTreeNode;
 import java.awt.*;
-import java.awt.event.*;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 
 public class LicenseManagerGUI {
-
     public static void main(String[] args) {
         JFrame frame = new JFrame("Software License Manager");
-        frame.setSize(500, 350);
+        frame.setSize(900, 600);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.setLayout(new BorderLayout(10, 10));
+        frame.setLocationRelativeTo(null);
 
-        JLabel titleLabel = new JLabel("Software License Manager", SwingConstants.CENTER);
-        titleLabel.setFont(new Font("Arial", Font.BOLD, 18));
-        frame.add(titleLabel, BorderLayout.NORTH);
+        JMenuBar menuBar = new JMenuBar();
 
-        JPanel inputPanel = new JPanel(new GridLayout(5, 2, 10, 10));
+        JMenu productMenu = new JMenu("Product");
+        JMenu licenseMenu = new JMenu("License");
+        JMenu toolsMenu = new JMenu("Tools");
+        JMenu helpMenu = new JMenu("Help");
+
+        JMenuItem addProduct = new JMenuItem("Add Product");
+        JMenuItem removeProduct = new JMenuItem("Remove Product");
+        productMenu.add(addProduct);
+        productMenu.add(removeProduct);
+
+        JMenuItem newLicense = new JMenuItem("New License");
+        JMenuItem deleteLicense = new JMenuItem("Delete License");
+        licenseMenu.add(newLicense);
+        licenseMenu.add(deleteLicense);
+
+        JMenuItem exportItem = new JMenuItem("Export Data");
+        toolsMenu.add(exportItem);
+
+        JMenuItem aboutItem = new JMenuItem("About");
+        helpMenu.add(aboutItem);
+
+        addProduct.addActionListener(e -> JOptionPane.showMessageDialog(frame, "Add Product clicked"));
+        removeProduct.addActionListener(e -> JOptionPane.showMessageDialog(frame, "Remove Product clicked"));
+        newLicense.addActionListener(e -> JOptionPane.showMessageDialog(frame, "New License clicked"));
+        deleteLicense.addActionListener(e -> JOptionPane.showMessageDialog(frame, "Delete License clicked"));
+        exportItem.addActionListener(e -> JOptionPane.showMessageDialog(frame, "Export clicked"));
+        aboutItem.addActionListener(e -> JOptionPane.showMessageDialog(frame, "License Manager v1.0 by Jack Doyle"));
+
+        menuBar.add(productMenu);
+        menuBar.add(licenseMenu);
+        menuBar.add(toolsMenu);
+        menuBar.add(helpMenu);
+
+        frame.setJMenuBar(menuBar);
+
+        DefaultMutableTreeNode root = new DefaultMutableTreeNode("Database Storage");
+        DefaultMutableTreeNode node1 = new DefaultMutableTreeNode("Local Licenses");
+        root.add(node1);
+        JTree tree = new JTree(root);
+        JScrollPane treeScroll = new JScrollPane(tree);
+
+        JPanel rightPanel = new JPanel(new BorderLayout(10, 10));
+        rightPanel.setBackground(Color.WHITE);
+
+        JPanel formPanel = new JPanel(new GridLayout(5, 2, 10, 10));
+        formPanel.setBorder(BorderFactory.createTitledBorder("License Generator"));
+        formPanel.setBackground(Color.WHITE);
 
         JLabel softwareLabel = new JLabel("Software:");
         String[] softwareOptions = {"AutoCAD", "Windows", "Photoshop", "WinRAR"};
@@ -40,24 +83,42 @@ public class LicenseManagerGUI {
         JButton generateButton = new JButton("Generate License");
         JButton clearButton = new JButton("Clear Fields");
 
-        inputPanel.add(softwareLabel);
-        inputPanel.add(softwareDropdown);
-        inputPanel.add(nameLabel);
-        inputPanel.add(nameField);
-        inputPanel.add(keyLabel);
-        inputPanel.add(keyField);
-        inputPanel.add(expiryLabel);
-        inputPanel.add(expiryField);
-        inputPanel.add(generateButton);
-        inputPanel.add(clearButton);
+        formPanel.add(softwareLabel);
+        formPanel.add(softwareDropdown);
+        formPanel.add(nameLabel);
+        formPanel.add(nameField);
+        formPanel.add(keyLabel);
+        formPanel.add(keyField);
+        formPanel.add(expiryLabel);
+        formPanel.add(expiryField);
+        formPanel.add(generateButton);
+        formPanel.add(clearButton);
 
-        frame.add(inputPanel, BorderLayout.CENTER);
+        rightPanel.add(formPanel, BorderLayout.NORTH);
 
-        JTextArea outputArea = new JTextArea();
-        outputArea.setEditable(false);
-        outputArea.setMargin(new Insets(10, 10, 10, 10));
-        JScrollPane scroll = new JScrollPane(outputArea);
-        frame.add(scroll, BorderLayout.SOUTH);
+        String[] columns = {"Software", "User", "License Key", "License Code", "Expiry", "Status"};
+        DefaultTableModel tableModel = new DefaultTableModel(columns, 0);
+        JTable table = new JTable(tableModel);
+        JScrollPane tableScroll = new JScrollPane(table);
+        rightPanel.add(tableScroll, BorderLayout.CENTER);
+
+        JLabel statusLabel = new JLabel("License Count: 0");
+        statusLabel.setBorder(BorderFactory.createEmptyBorder(3, 10, 3, 10));
+        JPanel statusPanel = new JPanel(new BorderLayout());
+        statusPanel.add(statusLabel, BorderLayout.EAST);
+
+        frame.add(statusPanel, BorderLayout.SOUTH);
+
+        JSplitPane splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, treeScroll, rightPanel);
+        splitPane.setDividerLocation(250);
+        frame.add(splitPane, BorderLayout.CENTER);
+
+        JPopupMenu popup = new JPopupMenu();
+        JMenuItem exportCsv = new JMenuItem("Export All to CSV");
+        JMenuItem exportExcel = new JMenuItem("Export All to Excel");
+        popup.add(exportCsv);
+        popup.add(exportExcel);
+        table.setComponentPopupMenu(popup);
 
         generateButton.addActionListener(e -> {
             String software = (String) softwareDropdown.getSelectedItem();
@@ -66,7 +127,7 @@ public class LicenseManagerGUI {
             String expiry = expiryField.getText().trim();
 
             if (name.isEmpty() || key.isEmpty() || expiry.isEmpty()) {
-                outputArea.setText("Please fill out all fields before generating a license.");
+                JOptionPane.showMessageDialog(frame, "Please fill out all fields.", "Error", JOptionPane.ERROR_MESSAGE);
                 return;
             }
 
@@ -74,15 +135,23 @@ public class LicenseManagerGUI {
                 DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MM/dd/yyyy");
                 LocalDate expDate = LocalDate.parse(expiry, formatter);
                 String licenseCode = software.toUpperCase() + "-" + name.toUpperCase() + "-" + Math.abs(key.hashCode());
-                outputArea.setText("License Generated Successfully!\n\n"
-                        + "Software: " + software + "\n"
-                        + "Name: " + name + "\n"
-                        + "Key: " + key + "\n"
-                        + "License Code: " + licenseCode + "\n"
-                        + "Expires: " + expDate.format(formatter) + "\n"
-                        + "Status: ACTIVE");
+
+                tableModel.addRow(new Object[]{
+                        software, name, key, licenseCode, expDate.format(formatter), "ACTIVE"
+                });
+
+                statusLabel.setText("License Count: " + tableModel.getRowCount());
+                JOptionPane.showMessageDialog(frame,
+                        "License Generated Successfully!\n\n" +
+                        "Software: " + software + "\n" +
+                        "Name: " + name + "\n" +
+                        "Key: " + key + "\n" +
+                        "License Code: " + licenseCode + "\n" +
+                        "Expires: " + expDate.format(formatter),
+                        "License Created",
+                        JOptionPane.INFORMATION_MESSAGE);
             } catch (Exception ex) {
-                outputArea.setText("Invalid date format. Please use MM/DD/YYYY.");
+                JOptionPane.showMessageDialog(frame, "Invalid date format. Use MM/DD/YYYY.", "Error", JOptionPane.ERROR_MESSAGE);
             }
         });
 
@@ -91,8 +160,11 @@ public class LicenseManagerGUI {
             nameField.setText("");
             keyField.setText("");
             expiryField.setText("");
-            outputArea.setText("");
         });
+
+        try {
+            UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+        } catch (Exception ignored) {}
 
         frame.setVisible(true);
     }
