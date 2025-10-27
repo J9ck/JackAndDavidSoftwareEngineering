@@ -1,6 +1,6 @@
 # Software License and Usage Management System  
 **Fall 2025 — Software Engineering Project**  
-**Developed by:** Jack Doyle & David  
+**Developed by:** J9ck & josetovar22  
 
 ---
 
