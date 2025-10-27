@@ -1,7 +1,6 @@
 // LicenseManagerGUI.java
 // Created by Jack Doyle
-// Updated: October 19, 2025
-// Front-End GUI for the Software License and Usage Management System
+// Updated on October 27, 2025
 
 package licensemanagergui;
 
