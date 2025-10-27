@@ -1,6 +1,6 @@
 // LicenseManagerGUI.java
 // Created by Jack Doyle
-// Updated on October 27, 2025
+// October 27, 2025
 package licensemanagergui;
 
 import javax.swing.*;
@@ -99,25 +99,46 @@ public class LicenseManagerGUI {
         frame.setJMenuBar(menuBar);
 
         addProduct.addActionListener(e -> {
-            String newProd = JOptionPane.showInputDialog(frame, "Enter new product name:");
-            if (newProd != null && !newProd.isBlank()) {
-                ((DefaultMutableTreeNode) tree.getModel().getRoot()).add(new DefaultMutableTreeNode(newProd));
-                ((DefaultTreeModel) tree.getModel()).reload();
-                JOptionPane.showMessageDialog(frame, "Product added: " + newProd);
-            }
-        });
+          String newProd = JOptionPane.showInputDialog(frame, "Enter new product name:");
+          if (newProd != null && !newProd.isBlank()) {
+          DefaultMutableTreeNode newNode = new DefaultMutableTreeNode(newProd);
+        ((DefaultMutableTreeNode) tree.getModel().getRoot()).add(newNode);
+        ((DefaultTreeModel) tree.getModel()).reload();
 
-        removeProduct.addActionListener(e -> {
-            var path = tree.getSelectionPath();
-            if (path == null || path.getLastPathComponent() == tree.getModel().getRoot()) {
-                JOptionPane.showMessageDialog(frame, "Select a product to remove.", "Error", JOptionPane.ERROR_MESSAGE);
-            } else {
-                DefaultMutableTreeNode selected = (DefaultMutableTreeNode) path.getLastPathComponent();
-                selected.removeFromParent();
-                ((DefaultTreeModel) tree.getModel()).reload();
-                JOptionPane.showMessageDialog(frame, "Product removed.");
+        softwareDropdown.addItem(newProd);
+
+        JOptionPane.showMessageDialog(frame, "Product added: " + newProd);
+    }
+});
+
+       removeProduct.addActionListener(e -> {
+    var path = tree.getSelectionPath();
+    if (path == null || path.getLastPathComponent() == tree.getModel().getRoot()) {
+        JOptionPane.showMessageDialog(frame, "Select a product or license to remove.", "Error", JOptionPane.ERROR_MESSAGE);
+    } else {
+        DefaultMutableTreeNode selected = (DefaultMutableTreeNode) path.getLastPathComponent();
+        String selectedName = selected.toString();
+
+
+        for (int i = 0; i < softwareDropdown.getItemCount(); i++) {
+            if (softwareDropdown.getItemAt(i).equals(selectedName)) {
+                softwareDropdown.removeItemAt(i);
+                break;
             }
-        });
+        }
+
+        for (int i = tableModel.getRowCount() - 1; i >= 0; i--) {
+            if (tableModel.getValueAt(i, 0).equals(selectedName)) {
+                tableModel.removeRow(i);
+            }
+        }
+
+        selected.removeFromParent();
+        ((DefaultTreeModel) tree.getModel()).reload();
+        statusLabel.setText("License Count: " + tableModel.getRowCount());
+        JOptionPane.showMessageDialog(frame, "Removed: " + selectedName);
+    }
+});
 
         newLicense.addActionListener(e -> {
             String software = JOptionPane.showInputDialog(frame, "Software:");
@@ -145,7 +166,7 @@ public class LicenseManagerGUI {
             }
         });
 
-        exportItem.addActionListener(e -> JOptionPane.showMessageDialog(frame, "Exporting not implemented yet."));
+        exportItem.addActionListener(e -> JOptionPane.showMessageDialog(frame, "Exporting not implemented yet. Stay tuned!"));
         aboutItem.addActionListener(e -> JOptionPane.showMessageDialog(frame, "License Manager v1.0 by Jack Doyle & David Tovar\nwww.jgcks.com"));
 
         generateButton.addActionListener(e -> {
