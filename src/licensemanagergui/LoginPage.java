@@ -18,6 +18,7 @@ public class LoginPage extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
+        bannerLabel = new javax.swing.JLabel();
         jLabel1 = new javax.swing.JLabel();
         jLabel2 = new javax.swing.JLabel();
         jLabel4 = new javax.swing.JLabel();
@@ -30,6 +31,10 @@ public class LoginPage extends javax.swing.JFrame {
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("License Manager Login");
         setResizable(false);
+
+        // Banner Image
+        bannerLabel.setIcon(new javax.swing.ImageIcon(getClass().getResource("/licensemanagergui/login_banner.png")));
+        bannerLabel.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
 
         jLabel1.setFont(new java.awt.Font("Apple Braille", 1, 30)); 
         jLabel1.setForeground(new java.awt.Color(51, 153, 255));
@@ -57,9 +62,11 @@ public class LoginPage extends javax.swing.JFrame {
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.CENTER)
             .addGroup(layout.createSequentialGroup()
-                .addGap(150)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                .addGap(100)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.CENTER)
+                    .addComponent(bannerLabel)
                     .addComponent(jLabel1)
+                    .addComponent(jLabel2)
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(jLabel4)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -67,20 +74,20 @@ public class LoginPage extends javax.swing.JFrame {
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(jLabel5)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(password))
-                    .addGroup(javax.swing.GroupLayout.Alignment.CENTER, layout.createSequentialGroup()
-                        .addComponent(jButton1))
-                    .addComponent(jLabel6, javax.swing.GroupLayout.Alignment.CENTER)
-                    .addComponent(jLabel2, javax.swing.GroupLayout.Alignment.CENTER))
-                .addContainerGap(150, Short.MAX_VALUE))
+                        .addComponent(password, javax.swing.GroupLayout.PREFERRED_SIZE, 200, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(jButton1)
+                    .addComponent(jLabel6))
+                .addContainerGap(100, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createSequentialGroup()
-                .addGap(40)
-                .addComponent(jLabel1)
+                .addGap(20)
+                .addComponent(bannerLabel)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(jLabel1)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jLabel2)
-                .addGap(30)
+                .addGap(20)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel4)
                     .addComponent(username, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
@@ -99,26 +106,25 @@ public class LoginPage extends javax.swing.JFrame {
         setLocationRelativeTo(null);
     }// </editor-fold>//GEN-END:initComponents
 
-    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {
-        String usn = username.getText().trim();
-        String pass = new String(password.getPassword()).trim();
+private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {
+    String usn = username.getText().trim();
+    String pass = new String(password.getPassword()).trim();
 
-        // Hardcoded credentials (replace with DatabaseHelper later)
-        if (usn.equals("admin") && pass.equals("ric401")) {
-            // Launch main GUI window
-            try {
-                LicenseManagerGUI.main(new String[]{}); 
-                dispose(); // close login
-            } catch (Exception e) {
-                JOptionPane.showMessageDialog(this, "Error launching GUI: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
-                e.printStackTrace();
-            }
-        } else {
-            JOptionPane.showMessageDialog(this, "Invalid username or password.", "Login Failed", JOptionPane.ERROR_MESSAGE);
-            username.setText("");
-            password.setText("");
+    if (usn.equals("admin") && pass.equals("ric401")) {
+        try {
+            LicenseManagerGUI.main(null); // launches GUI
+            dispose(); // closes login window
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(this, "Error launching GUI: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+            e.printStackTrace();
         }
+    } else {
+        JOptionPane.showMessageDialog(this, "Invalid username or password.", "Login Failed", JOptionPane.ERROR_MESSAGE);
+        username.setText("");
+        password.setText("");
     }
+}
+
 
     private void jLabel6MouseClicked(java.awt.event.MouseEvent evt) {
         JOptionPane.showMessageDialog(this, "Username: admin\nPassword: ric401", "Forgot Password", JOptionPane.INFORMATION_MESSAGE);
@@ -140,6 +146,7 @@ public class LoginPage extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JLabel bannerLabel;
     private javax.swing.JButton jButton1;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;

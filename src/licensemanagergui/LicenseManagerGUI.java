@@ -12,17 +12,17 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 
-public class LicenseManagerGUI {
+public class LicenseManagerGUI extends JFrame {
     private static DatabaseHelper db;
-    
-    public static void main(String[] args) {
+
+    public LicenseManagerGUI() {
         db = new DatabaseHelper();
         Runtime.getRuntime().addShutdownHook(new Thread(() -> db.close()));
-        
-        JFrame frame = new JFrame("Software License Manager");
-        frame.setSize(950, 600);
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.setLocationRelativeTo(null);
+
+        setTitle("Software License Manager");
+        setSize(950, 600);
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setLocationRelativeTo(null);
 
         // tree
         DefaultMutableTreeNode root = new DefaultMutableTreeNode("Database Storage");
@@ -36,7 +36,7 @@ public class LicenseManagerGUI {
         rightPanel.setBackground(Color.WHITE);
 
         // form panel
-        JPanel formPanel = new JPanel(new GridLayout(7, 2, 5, 5)); // tighter layout
+        JPanel formPanel = new JPanel(new GridLayout(7, 2, 5, 5));
         formPanel.setBorder(BorderFactory.createTitledBorder("License Generator"));
         formPanel.setBackground(Color.WHITE);
 
@@ -62,7 +62,7 @@ public class LicenseManagerGUI {
         formPanel.add(expiryLabel); formPanel.add(expiryField);
         formPanel.add(priceLabel); formPanel.add(priceField);
         formPanel.add(generateButton); formPanel.add(clearButton);
-        formPanel.add(recordUsageButton); formPanel.add(new JLabel("")); // placeholder for alignment
+        formPanel.add(recordUsageButton); formPanel.add(new JLabel(""));
 
         rightPanel.add(formPanel, BorderLayout.NORTH);
 
@@ -78,12 +78,12 @@ public class LicenseManagerGUI {
         statusLabel.setBorder(BorderFactory.createEmptyBorder(3,10,3,10));
         JPanel statusPanel = new JPanel(new BorderLayout());
         statusPanel.add(statusLabel, BorderLayout.EAST);
-        frame.add(statusPanel, BorderLayout.SOUTH);
+        add(statusPanel, BorderLayout.SOUTH);
 
         // split pane
         JSplitPane splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, treeScroll, rightPanel);
         splitPane.setDividerLocation(250);
-        frame.add(splitPane, BorderLayout.CENTER);
+        add(splitPane, BorderLayout.CENTER);
 
         // menu bar
         JMenuBar menuBar = new JMenuBar();
@@ -103,7 +103,7 @@ public class LicenseManagerGUI {
         licenseMenu.add(newLicense); licenseMenu.add(deleteLicense);
         toolsMenu.add(exportItem); helpMenu.add(aboutItem);
         menuBar.add(productMenu); menuBar.add(licenseMenu); menuBar.add(toolsMenu); menuBar.add(helpMenu);
-        frame.setJMenuBar(menuBar);
+        setJMenuBar(menuBar);
 
         // Helper to load licenses from database
         Runnable loadFromDB = () -> {
@@ -117,33 +117,31 @@ public class LicenseManagerGUI {
             }
             statusLabel.setText("License Count: " + tableModel.getRowCount());
         };
-        
-        // Load existing licenses on startup
+
         loadFromDB.run();
 
         // menu actions
         addProduct.addActionListener(e->{
-            String newProd = JOptionPane.showInputDialog(frame,"Enter new product:");
+            String newProd = JOptionPane.showInputDialog(this,"Enter new product:");
             if(newProd!=null && !newProd.isBlank()){
                 DefaultMutableTreeNode newNode = new DefaultMutableTreeNode(newProd);
                 ((DefaultMutableTreeNode) tree.getModel().getRoot()).add(newNode);
                 ((DefaultTreeModel) tree.getModel()).reload();
                 softwareDropdown.addItem(newProd);
-                JOptionPane.showMessageDialog(frame,"Added: "+newProd);
+                JOptionPane.showMessageDialog(this,"Added: "+newProd);
             }
         });
 
         removeProduct.addActionListener(e->{
             var path = tree.getSelectionPath();
             if(path==null || path.getLastPathComponent()==tree.getModel().getRoot()){
-                JOptionPane.showMessageDialog(frame,"Select something to remove","Error",JOptionPane.ERROR_MESSAGE);
+                JOptionPane.showMessageDialog(this,"Select something to remove","Error",JOptionPane.ERROR_MESSAGE);
             }else{
                 DefaultMutableTreeNode selected=(DefaultMutableTreeNode) path.getLastPathComponent();
                 String selectedName = selected.toString();
-                
-                // Delete from database
+
                 db.deleteBySoftware(selectedName);
-                
+
                 for(int i=0;i<softwareDropdown.getItemCount();i++){
                     if(softwareDropdown.getItemAt(i).equals(selectedName)){
                         softwareDropdown.removeItemAt(i); break;
@@ -152,55 +150,9 @@ public class LicenseManagerGUI {
                 selected.removeFromParent();
                 ((DefaultTreeModel)tree.getModel()).reload();
                 loadFromDB.run();
-                JOptionPane.showMessageDialog(frame,"Removed: "+selectedName);
+                JOptionPane.showMessageDialog(this,"Removed: "+selectedName);
             }
         });
-
-        newLicense.addActionListener(e->{
-            String software = JOptionPane.showInputDialog(frame,"Software:");
-            String user = JOptionPane.showInputDialog(frame,"User:");
-            String key = JOptionPane.showInputDialog(frame,"License Key:");
-            String expiry = JOptionPane.showInputDialog(frame,"Expiry (MM/DD/YYYY):");
-            String priceText = JOptionPane.showInputDialog(frame,"License Price:");
-            try{
-                double price = Double.parseDouble(priceText);
-                DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MM/dd/yyyy");
-                LocalDate expDate = LocalDate.parse(expiry,formatter);
-                String licenseCode = software.toUpperCase()+"-"+user.toUpperCase()+"-"+Math.abs(key.hashCode());
-                int usage = 0;
-                double costPerUse = price;
-                
-                DatabaseHelper.License license = new DatabaseHelper.License(
-                    software, user, key, licenseCode, expDate.format(formatter),
-                    "ACTIVE", price, usage, costPerUse
-                );
-                
-                if (db.addLicense(license)) {
-                    loadFromDB.run();
-                } else {
-                    JOptionPane.showMessageDialog(frame,"Failed to save","Error",JOptionPane.ERROR_MESSAGE);
-                }
-            }catch(Exception ex){
-                JOptionPane.showMessageDialog(frame,"Invalid input","Error",JOptionPane.ERROR_MESSAGE);
-            }
-        });
-
-        deleteLicense.addActionListener(e->{
-            int row = table.getSelectedRow();
-            if(row!=-1){
-                String licenseCode = (String) tableModel.getValueAt(row, 3);
-                if (db.deleteLicense(licenseCode)) {
-                    loadFromDB.run();
-                } else {
-                    JOptionPane.showMessageDialog(frame,"Failed to delete","Error",JOptionPane.ERROR_MESSAGE);
-                }
-            }else{
-                JOptionPane.showMessageDialog(frame,"Select a license to delete","Error",JOptionPane.ERROR_MESSAGE);
-            }
-        });
-
-        exportItem.addActionListener(e->JOptionPane.showMessageDialog(frame,"Export not implemented"));
-        aboutItem.addActionListener(e->JOptionPane.showMessageDialog(frame,"License Manager v1.0 by jgcks & David\nwww.jgcks.com"));
 
         generateButton.addActionListener(e->{
             String software=(String)softwareDropdown.getSelectedItem();
@@ -209,7 +161,7 @@ public class LicenseManagerGUI {
             String expiry=expiryField.getText().trim();
             String priceText = priceField.getText().trim();
             if(name.isEmpty()||key.isEmpty()||expiry.isEmpty()||priceText.isEmpty()){
-                JOptionPane.showMessageDialog(frame,"Fill all fields","Error",JOptionPane.ERROR_MESSAGE);
+                JOptionPane.showMessageDialog(this,"Fill all fields","Error",JOptionPane.ERROR_MESSAGE);
                 return;
             }
             try{
@@ -219,12 +171,12 @@ public class LicenseManagerGUI {
                 String licenseCode = software.toUpperCase()+"-"+name.toUpperCase()+"-"+Math.abs(key.hashCode());
                 int usage = 0;
                 double costPerUse = price;
-                
+
                 DatabaseHelper.License license = new DatabaseHelper.License(
                     software, name, key, licenseCode, expDate.format(formatter),
                     "ACTIVE", price, usage, costPerUse
                 );
-                
+
                 if (db.addLicense(license)) {
                     loadFromDB.run();
                     nameField.setText(""); 
@@ -232,10 +184,10 @@ public class LicenseManagerGUI {
                     expiryField.setText(""); 
                     priceField.setText("");
                 } else {
-                    JOptionPane.showMessageDialog(frame,"Failed to save","Error",JOptionPane.ERROR_MESSAGE);
+                    JOptionPane.showMessageDialog(this,"Failed to save","Error",JOptionPane.ERROR_MESSAGE);
                 }
             }catch(Exception ex){
-                JOptionPane.showMessageDialog(frame,"Bad input","Error",JOptionPane.ERROR_MESSAGE);
+                JOptionPane.showMessageDialog(this,"Bad input","Error",JOptionPane.ERROR_MESSAGE);
             }
         });
 
@@ -247,14 +199,14 @@ public class LicenseManagerGUI {
                 usage++;
                 double price = (double)tableModel.getValueAt(row,6);
                 double newCostPerUse = price/usage;
-                
+
                 if (db.updateUsage(licenseCode, usage, newCostPerUse)) {
                     loadFromDB.run();
                 } else {
-                    JOptionPane.showMessageDialog(frame,"Failed to update","Error",JOptionPane.ERROR_MESSAGE);
+                    JOptionPane.showMessageDialog(this,"Failed to update","Error",JOptionPane.ERROR_MESSAGE);
                 }
             }else{
-                JOptionPane.showMessageDialog(frame,"Select a license to record usage","Error",JOptionPane.ERROR_MESSAGE);
+                JOptionPane.showMessageDialog(this,"Select a license to record usage","Error",JOptionPane.ERROR_MESSAGE);
             }
         });
 
@@ -264,6 +216,9 @@ public class LicenseManagerGUI {
         });
 
         try{UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());}catch(Exception ignored){}
-        frame.setVisible(true);
+    }
+
+    public static void main(String[] args) {
+        SwingUtilities.invokeLater(() -> new LicenseManagerGUI().setVisible(true));
     }
 }
