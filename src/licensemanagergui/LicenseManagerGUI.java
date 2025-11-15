@@ -4,13 +4,17 @@
 package licensemanagergui;
 
 import javax.swing.*;
+import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.table.JTableHeader;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
 import java.awt.*;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
+import java.util.ArrayList;
+import java.util.Arrays;
 
 public class LicenseManagerGUI extends JFrame {
     private static DatabaseHelper db;
@@ -19,56 +23,97 @@ public class LicenseManagerGUI extends JFrame {
         // set native look and feel
         try { UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName()); } catch (Exception ignored) {}
 
-        // fix menu colors
+        // Modern color scheme
+        Color primaryColor = new Color(41, 128, 185); // Modern blue
+        Color accentColor = new Color(52, 152, 219); // Light blue
+        Color backgroundColor = new Color(245, 247, 250); // Light gray background
+        Color panelBackground = Color.WHITE;
+        
+        // fix menu colors with modern theme
         UIManager.put("Menu.foreground", Color.BLACK);
         UIManager.put("MenuItem.foreground", Color.BLACK);
-        UIManager.put("Menu.selectionBackground", new Color(230, 230, 230));
-        UIManager.put("Menu.selectionForeground", Color.BLACK);
-        UIManager.put("MenuItem.selectionBackground", new Color(230, 230, 230));
-        UIManager.put("MenuItem.selectionForeground", Color.BLACK);
-        UIManager.put("MenuBar.background", new Color(245, 245, 245));
-        UIManager.put("Menu.background", new Color(245, 245, 245));
-        UIManager.put("MenuItem.background", new Color(245, 245, 245));
+        UIManager.put("Menu.selectionBackground", accentColor);
+        UIManager.put("Menu.selectionForeground", Color.WHITE);
+        UIManager.put("MenuItem.selectionBackground", accentColor);
+        UIManager.put("MenuItem.selectionForeground", Color.WHITE);
+        UIManager.put("MenuBar.background", panelBackground);
+        UIManager.put("Menu.background", panelBackground);
+        UIManager.put("MenuItem.background", panelBackground);
 
         db = new DatabaseHelper();
         Runtime.getRuntime().addShutdownHook(new Thread(() -> db.close()));
 
-        setTitle("software license manager");
-        setSize(950, 600);
+        setTitle("Software License Manager");
+        setSize(1100, 700);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
+        getContentPane().setBackground(backgroundColor);
 
-        // left tree
-        DefaultMutableTreeNode root = new DefaultMutableTreeNode("database storage");
-        DefaultMutableTreeNode node1 = new DefaultMutableTreeNode("local licenses");
+        // left tree with improved styling
+        DefaultMutableTreeNode root = new DefaultMutableTreeNode("Database Storage");
+        DefaultMutableTreeNode node1 = new DefaultMutableTreeNode("Local Licenses");
         root.add(node1);
         JTree tree = new JTree(root);
+        tree.setFont(new Font("Arial", Font.PLAIN, 13));
+        tree.setBackground(panelBackground);
         JScrollPane treeScroll = new JScrollPane(tree);
+        treeScroll.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
 
-        // right panel
-        JPanel rightPanel = new JPanel(new BorderLayout(10, 10));
-        rightPanel.setBackground(Color.WHITE);
+        // right panel with modern styling
+        JPanel rightPanel = new JPanel(new BorderLayout(15, 15));
+        rightPanel.setBackground(backgroundColor);
+        rightPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
 
-        // license form
-        JPanel formPanel = new JPanel(new GridLayout(7, 2, 5, 5));
-        formPanel.setBorder(BorderFactory.createTitledBorder("license generator"));
-        formPanel.setBackground(Color.WHITE);
+        // license form with improved layout
+        JPanel formPanel = new JPanel(new GridLayout(7, 2, 10, 10));
+        formPanel.setBorder(BorderFactory.createCompoundBorder(
+            BorderFactory.createTitledBorder(
+                BorderFactory.createLineBorder(primaryColor, 2),
+                "License Generator",
+                0,
+                0,
+                new Font("Arial", Font.BOLD, 14),
+                primaryColor
+            ),
+            BorderFactory.createEmptyBorder(10, 10, 10, 10)
+        ));
+        formPanel.setBackground(panelBackground);
 
-        JLabel softwareLabel = new JLabel("software:");
-        String[] softwareOptions = {"AutoCAD", "Windows", "Photoshop", "WinRAR"};
+        JLabel softwareLabel = new JLabel("Software:");
+        softwareLabel.setFont(new Font("Arial", Font.PLAIN, 13));
+        String[] softwareOptions = {"AutoCAD", "Windows", "Photoshop", "WinRAR", "Zoom+", "Microsoft Office", "Adobe Creative Cloud"};
         JComboBox<String> softwareDropdown = new JComboBox<>(softwareOptions);
-        JLabel nameLabel = new JLabel("user name:");
+        softwareDropdown.setFont(new Font("Arial", Font.PLAIN, 13));
+        softwareDropdown.setEditable(true); // Allow typing custom names
+        
+        JLabel nameLabel = new JLabel("User Name:");
+        nameLabel.setFont(new Font("Arial", Font.PLAIN, 13));
         JTextField nameField = new JTextField();
-        JLabel keyLabel = new JLabel("license key:");
+        nameField.setFont(new Font("Arial", Font.PLAIN, 13));
+        
+        JLabel keyLabel = new JLabel("License Key:");
+        keyLabel.setFont(new Font("Arial", Font.PLAIN, 13));
         JTextField keyField = new JTextField();
-        JLabel expiryLabel = new JLabel("expiry (mm/dd/yyyy):");
+        keyField.setFont(new Font("Arial", Font.PLAIN, 13));
+        
+        JLabel expiryLabel = new JLabel("Expiry (MM/DD/YYYY):");
+        expiryLabel.setFont(new Font("Arial", Font.PLAIN, 13));
         JTextField expiryField = new JTextField();
-        JLabel priceLabel = new JLabel("license price:");
+        expiryField.setFont(new Font("Arial", Font.PLAIN, 13));
+        
+        JLabel priceLabel = new JLabel("License Price:");
+        priceLabel.setFont(new Font("Arial", Font.PLAIN, 13));
         JTextField priceField = new JTextField();
+        priceField.setFont(new Font("Arial", Font.PLAIN, 13));
 
-        JButton generateButton = new JButton("generate license");
-        JButton clearButton = new JButton("clear fields");
-        JButton recordUsageButton = new JButton("record usage");
+        JButton generateButton = new JButton("Generate License");
+        styleButton(generateButton, primaryColor, Color.WHITE);
+        
+        JButton clearButton = new JButton("Clear Fields");
+        styleButton(clearButton, new Color(149, 165, 166), Color.WHITE);
+        
+        JButton recordUsageButton = new JButton("Record Usage");
+        styleButton(recordUsageButton, new Color(39, 174, 96), Color.WHITE);
 
         formPanel.add(softwareLabel); formPanel.add(softwareDropdown);
         formPanel.add(nameLabel); formPanel.add(nameField);
@@ -80,42 +125,89 @@ public class LicenseManagerGUI extends JFrame {
 
         rightPanel.add(formPanel, BorderLayout.NORTH);
 
-        // license table
-        String[] columns = {"software","user","license key","license code","expiry","status","price","usage","cost/use"};
-        DefaultTableModel tableModel = new DefaultTableModel(columns, 0);
+        // license table with modern styling
+        String[] columns = {"Software","User","License Key","License Code","Expiry","Status","Price","Usage","Cost/Use"};
+        DefaultTableModel tableModel = new DefaultTableModel(columns, 0) {
+            @Override
+            public boolean isCellEditable(int row, int column) {
+                return false; // Make table read-only
+            }
+        };
         JTable table = new JTable(tableModel);
+        table.setFont(new Font("Arial", Font.PLAIN, 12));
+        table.setRowHeight(25);
+        table.setShowGrid(true);
+        table.setGridColor(new Color(230, 230, 230));
+        table.setSelectionBackground(accentColor);
+        table.setSelectionForeground(Color.WHITE);
+        
+        // Style table header
+        JTableHeader header = table.getTableHeader();
+        header.setFont(new Font("Arial", Font.BOLD, 12));
+        header.setBackground(primaryColor);
+        header.setForeground(Color.WHITE);
+        header.setPreferredSize(new Dimension(header.getWidth(), 30));
+        
+        // Add alternating row colors
+        table.setDefaultRenderer(Object.class, new DefaultTableCellRenderer() {
+            @Override
+            public Component getTableCellRendererComponent(JTable table, Object value, 
+                    boolean isSelected, boolean hasFocus, int row, int column) {
+                Component c = super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
+                if (!isSelected) {
+                    c.setBackground(row % 2 == 0 ? Color.WHITE : new Color(248, 249, 250));
+                }
+                return c;
+            }
+        });
+        
         JScrollPane tableScroll = new JScrollPane(table);
+        tableScroll.setBorder(BorderFactory.createLineBorder(new Color(220, 220, 220)));
         rightPanel.add(tableScroll, BorderLayout.CENTER);
 
-        // status bar
-        JLabel statusLabel = new JLabel("license count: 0");
-        statusLabel.setBorder(BorderFactory.createEmptyBorder(3,10,3,10));
+        // status bar with modern styling
+        JLabel statusLabel = new JLabel("License Count: 0");
+        statusLabel.setFont(new Font("Arial", Font.PLAIN, 12));
+        statusLabel.setBorder(BorderFactory.createEmptyBorder(5, 10, 5, 10));
         JPanel statusPanel = new JPanel(new BorderLayout());
+        statusPanel.setBackground(panelBackground);
+        statusPanel.setBorder(BorderFactory.createMatteBorder(1, 0, 0, 0, new Color(220, 220, 220)));
         statusPanel.add(statusLabel, BorderLayout.EAST);
         add(statusPanel, BorderLayout.SOUTH);
 
-        // main split
+        // main split with better proportions
         JSplitPane splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, treeScroll, rightPanel);
-        splitPane.setDividerLocation(250);
+        splitPane.setDividerLocation(200);
+        splitPane.setBorder(BorderFactory.createEmptyBorder());
         add(splitPane, BorderLayout.CENTER);
 
         // menu bar
         JMenuBar menuBar = new JMenuBar();
-        JMenu productMenu = new JMenu("product");
-        JMenu licenseMenu = new JMenu("license");
-        JMenu toolsMenu = new JMenu("tools");
-        JMenu helpMenu = new JMenu("help");
+        menuBar.setBorder(BorderFactory.createMatteBorder(0, 0, 1, 0, new Color(220, 220, 220)));
+        JMenu productMenu = new JMenu("Product");
+        JMenu licenseMenu = new JMenu("License");
+        JMenu toolsMenu = new JMenu("Tools");
+        JMenu helpMenu = new JMenu("Help");
+        
+        // Style menus
+        Font menuFont = new Font("Arial", Font.PLAIN, 13);
+        productMenu.setFont(menuFont);
+        licenseMenu.setFont(menuFont);
+        toolsMenu.setFont(menuFont);
+        helpMenu.setFont(menuFont);
 
-        JMenuItem addProduct = new JMenuItem("add product");
-        JMenuItem removeProduct = new JMenuItem("remove product");
-        JMenuItem newLicense = new JMenuItem("new license");
-        JMenuItem deleteLicense = new JMenuItem("delete license");
-        JMenuItem exportItem = new JMenuItem("export data");
-        JMenuItem aboutItem = new JMenuItem("about");
+        JMenuItem addProduct = new JMenuItem("Add Product");
+        JMenuItem removeProduct = new JMenuItem("Remove Product");
+        JMenuItem newLicense = new JMenuItem("New License");
+        JMenuItem deleteLicense = new JMenuItem("Delete License");
+        JMenuItem todoItem = new JMenuItem("To-Do List");
+        JMenuItem exportItem = new JMenuItem("Export Data");
+        JMenuItem aboutItem = new JMenuItem("About");
 
         productMenu.add(addProduct); productMenu.add(removeProduct);
         licenseMenu.add(newLicense); licenseMenu.add(deleteLicense);
-        toolsMenu.add(exportItem); helpMenu.add(aboutItem);
+        toolsMenu.add(todoItem); toolsMenu.addSeparator(); toolsMenu.add(exportItem);
+        helpMenu.add(aboutItem);
         menuBar.add(productMenu); menuBar.add(licenseMenu); menuBar.add(toolsMenu); menuBar.add(helpMenu);
         setJMenuBar(menuBar);
 
@@ -126,7 +218,8 @@ public class LicenseManagerGUI extends JFrame {
             for (DatabaseHelper.License lic : licenses) {
                 tableModel.addRow(new Object[]{
                     lic.software, lic.userName, lic.licenseKey, lic.licenseCode,
-                    lic.expiry, lic.status, lic.price, lic.usage, lic.costPerUse
+                    lic.expiry, lic.status, String.format("$%.2f", lic.price), 
+                    lic.usage, String.format("$%.2f", lic.costPerUse)
                 });
             }
             statusLabel.setText("license count: " + tableModel.getRowCount());
@@ -197,25 +290,63 @@ public class LicenseManagerGUI extends JFrame {
         exportItem.addActionListener(e -> {
             JOptionPane.showMessageDialog(this, "export feature coming soon.");
         });
+        
+        // todo list
+        todoItem.addActionListener(e -> {
+            TodoManager todoManager = new TodoManager(this, db);
+            todoManager.setVisible(true);
+        });
 
         // about
         aboutItem.addActionListener(e -> {
             JOptionPane.showMessageDialog(this,
-                "software license manager\ncreated by jack doyle\nwww.jgcks.com\n© 2025\nversion 2.0",
-                "about", JOptionPane.INFORMATION_MESSAGE);
+                "Software License Manager\n" +
+                "Created by Jack Doyle\n" +
+                "www.jgcks.com\n" +
+                "© 2025\n" +
+                "Version 2.5\n\n" +
+                "Features:\n" +
+                "• SQLite Database Storage\n" +
+                "• Fuzzy Spell-Check for License Names\n" +
+                "• Modern User Interface",
+                "About", JOptionPane.INFORMATION_MESSAGE);
         });
 
-        // generate license
+        // generate license with spell-check support
         generateButton.addActionListener(e -> {
-            String software = (String) softwareDropdown.getSelectedItem();
+            Object selectedItem = softwareDropdown.getSelectedItem();
+            String software = selectedItem != null ? selectedItem.toString().trim() : "";
             String name = nameField.getText().trim();
             String key = keyField.getText().trim();
             String expiry = expiryField.getText().trim();
             String priceText = priceField.getText().trim();
 
             if (name.isEmpty() || key.isEmpty() || expiry.isEmpty() || priceText.isEmpty()) {
-                JOptionPane.showMessageDialog(this, "fill all fields", "error", JOptionPane.ERROR_MESSAGE);
+                JOptionPane.showMessageDialog(this, "Please fill all fields", "Validation Error", JOptionPane.ERROR_MESSAGE);
                 return;
+            }
+            
+            // Get all available software names for spell checking
+            List<String> availableSoftware = new ArrayList<>();
+            for (int i = 0; i < softwareDropdown.getItemCount(); i++) {
+                availableSoftware.add(softwareDropdown.getItemAt(i));
+            }
+            
+            // Check if the entered software name needs spell correction
+            if (!availableSoftware.contains(software)) {
+                String suggestion = SpellChecker.findBestMatch(software, availableSoftware);
+                if (suggestion != null) {
+                    int response = JOptionPane.showConfirmDialog(this,
+                        "Did you mean '" + suggestion + "' instead of '" + software + "'?",
+                        "Spelling Suggestion",
+                        JOptionPane.YES_NO_OPTION,
+                        JOptionPane.QUESTION_MESSAGE);
+                    
+                    if (response == JOptionPane.YES_OPTION) {
+                        software = suggestion;
+                        softwareDropdown.setSelectedItem(suggestion);
+                    }
+                }
             }
 
             try {
@@ -237,11 +368,18 @@ public class LicenseManagerGUI extends JFrame {
                     keyField.setText("");
                     expiryField.setText("");
                     priceField.setText("");
+                    JOptionPane.showMessageDialog(this, "License generated successfully!", 
+                        "Success", JOptionPane.INFORMATION_MESSAGE);
                 } else {
-                    JOptionPane.showMessageDialog(this, "failed to save", "error", JOptionPane.ERROR_MESSAGE);
+                    JOptionPane.showMessageDialog(this, "Failed to save license to database", 
+                        "Error", JOptionPane.ERROR_MESSAGE);
                 }
+            } catch (NumberFormatException ex) {
+                JOptionPane.showMessageDialog(this, "Invalid price format. Please enter a valid number.", 
+                    "Validation Error", JOptionPane.ERROR_MESSAGE);
             } catch (Exception ex) {
-                JOptionPane.showMessageDialog(this, "bad input", "error", JOptionPane.ERROR_MESSAGE);
+                JOptionPane.showMessageDialog(this, "Invalid date format. Please use MM/DD/YYYY.", 
+                    "Validation Error", JOptionPane.ERROR_MESSAGE);
             }
         });
 
@@ -272,6 +410,30 @@ public class LicenseManagerGUI extends JFrame {
             keyField.setText("");
             expiryField.setText("");
             priceField.setText("");
+        });
+    }
+    
+    /**
+     * Helper method to style buttons with modern appearance
+     */
+    private void styleButton(JButton button, Color bgColor, Color fgColor) {
+        button.setFont(new Font("Arial", Font.BOLD, 12));
+        button.setBackground(bgColor);
+        button.setForeground(fgColor);
+        button.setFocusPainted(false);
+        button.setBorderPainted(false);
+        button.setOpaque(true);
+        button.setCursor(new Cursor(Cursor.HAND_CURSOR));
+        button.setBorder(BorderFactory.createEmptyBorder(8, 15, 8, 15));
+        
+        // Add hover effect
+        button.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                button.setBackground(bgColor.brighter());
+            }
+            public void mouseExited(java.awt.event.MouseEvent evt) {
+                button.setBackground(bgColor);
+            }
         });
     }
 
