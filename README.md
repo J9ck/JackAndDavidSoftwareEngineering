@@ -45,5 +45,5 @@ The **Software License and Usage Management System** is a lightweight desktop ap
 ## Future Plans  
 - Database integration for license persistence.  
 - Automated usage reporting.  
-- Network-based license monitoring.  
+- Network based license monitoring.  
 - Cloud synchronization support.  
