@@ -28,11 +28,11 @@ The problem: Companies buy expensive software licenses without knowing if employ
 
 ```
 ┌─────────────────────────────────────────────────────────┐
-│                  Employee Workstations                   │
-│  ┌──────────────┐  ┌──────────────┐  ┌──────────────┐  │
-│  │ MonitorAgent │  │ MonitorAgent │  │ MonitorAgent │  │
-│  │   (John)     │  │   (Sarah)    │  │   (Mike)     │  │
-│  └──────┬───────┘  └──────┬───────┘  └──────┬───────┘  │
+│                  Employee Workstations                  │
+│  ┌──────────────┐  ┌──────────────┐  ┌──────────────┐   │
+│  │ MonitorAgent │  │ MonitorAgent │  │ MonitorAgent │   │
+│  │   (John)     │  │   (Sarah)    │  │   (Mike)     │   │
+│  └──────┬───────┘  └──────┬───────┘  └──────┬───────┘   │
 └─────────┼──────────────────┼──────────────────┼─────────┘
           │                  │                  │
           └──────────────────┼──────────────────┘
