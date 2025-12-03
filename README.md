@@ -38,7 +38,7 @@
 38|           └──────────────────┼──────────────────┘
 39|                              ▼
 40|                     ┌─────────────────┐
-41|                     │Postgre Database │
+41|                     │PostgreSQL Database│
 42|                     │ (Remote Server) │
 43|                     └────────┬────────┘
 44|                              │
@@ -77,7 +77,7 @@
 77|    cd JackAndDavidSoftwareEngineering
 78|    ```
 79| 
-80| 2. **Add MySQL Connector to project:**
+80| 2. **Add PostgreSQL Connector to project:**
 81|    - Download PostgreSQL Connector/J from internet
 82|    - In NetBeans: Right-click Libraries → Add JAR/Folder → Select the connector JAR
 83| 
