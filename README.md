@@ -15,7 +15,7 @@ The problem: Companies buy expensive software licenses without knowing if employ
 
 - License management (create, edit, delete)
 - Automated usage monitoring via background agents
-- Remote MySQL database (not local storage)
+- Remote postgreSQL database (not local storage)
 - User authentication with role-based access
 - Real-time cost-per-use calculations
 - CSV export for reports
@@ -56,7 +56,7 @@ Agents check running processes every 30 seconds and send usage data to the datab
 
 - Java 17
 - Swing/AWT for GUI
-- MySQL (remote hosted on FreeSQLDatabase)
+- postgreSQL (remote hosted on FreeSQLDatabase)
 - JDBC connector
 - NetBeans IDE
 
@@ -66,7 +66,7 @@ Agents check running processes every 30 seconds and send usage data to the datab
 
 ### Prerequisites
 - Java JDK 17 or higher
-- MySQL Connector/J JAR file
+- postgreSQL Connector/J JAR file
 - Internet connection (for remote database)
 
 ### Quick Start
@@ -78,7 +78,7 @@ Agents check running processes every 30 seconds and send usage data to the datab
    ```
 
 2. **Add MySQL Connector to project:**
-   - Download MySQL Connector/J from mysql.com
+   - Download postgreSQL Connector/J from internet
    - In NetBeans: Right-click Libraries → Add JAR/Folder → Select the connector JAR
 
 3. **Run the application:**
@@ -94,7 +94,7 @@ Agents check running processes every 30 seconds and send usage data to the datab
 
 1. In NetBeans: Right-click project → Clean and Build
 2. JAR file will be in `dist/LicenseManagerGUI.jar`
-3. Distribute with MySQL Connector JAR included in classpath
+3. Distribute with PostgreSQL Connector JAR included in classpath
 
 ---
 
