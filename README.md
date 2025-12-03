@@ -38,7 +38,7 @@ The problem: Companies buy expensive software licenses without knowing if employ
           └──────────────────┼──────────────────┘
                              ▼
                     ┌─────────────────┐
-                    │  MySQL Database │
+                    │Postgre Database │
                     │ (Remote Server) │
                     └────────┬────────┘
                              │
