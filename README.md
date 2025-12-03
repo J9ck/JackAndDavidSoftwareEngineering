@@ -48,16 +48,16 @@ A desktop application for tracking and monitoring software licenses across an or
 ```
 ┌─────────────────────────────────────────────────────────┐
 │                  Employee Workstations                  │
-│  ┌──────────────┐  ┌──────────────┐  ┌──────────────┐   │
-│  │ MonitorAgent │  │ MonitorAgent │  │ MonitorAgent │   │
-│  │   (John)     │  │   (Sarah)    │  │   (Mike)     │   │
-│  └──────┬───────┘  └──────┬───────┘  └──────┬───────┘   │
+│  ┌──────────────┐   ┌──────────────┐   ┌──────────────┐ │
+│  │ MonitorAgent │   │ MonitorAgent │   │ MonitorAgent │ │
+│  │   (John)     │   │   (Sarah)    │   │   (Mike)     │ │
+│  └──────┬───────┘   └──────┬───────┘   └──────┬───────┘ │
 └─────────┼──────────────────┼──────────────────┼─────────┘
           │                  │                  │
           └──────────────────┼──────────────────┘
                              ▼
                     ┌─────────────────┐
-                    │PostgreSQL Database│
+                    │  PostgreSQL DB  │
                     │ (Remote Server) │
                     └────────┬────────┘
                              │
